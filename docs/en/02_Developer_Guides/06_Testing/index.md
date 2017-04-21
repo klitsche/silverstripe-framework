@@ -19,22 +19,16 @@ If you are familiar with PHP coding but new to unit testing then check out Mark'
 You should also read over [the PHPUnit manual](http://www.phpunit.de/manual/current/en/). It provides a lot of
 fundamental concepts that we build on in this documentation.
 
-Unit tests are not included in the normal SilverStripe downloads so you need to install them through git repositories
-([installation instructions](/getting_started/composer)).
+Unit tests are not included in the zip/tar.gz SilverStripe [downloads](http://www.silverstripe.org/software/download/) so to get them, install SilverStripe [with composer](/getting_started/composer).
 
-## Install with Composer
+## Invoking phpunit
 
-Once you've got your project up and running, open a terminal and cd to your project root.
+Once you have used composer to create your project, `cd` to your project root. Composer will have installed PHPUnit alongside the required PHP classes into the `vendor/bin/` directory.
 
-	composer require --dev "phpunit/phpunit:*@stable"
+If you don't want to invoke PHPUnit through its full path (`vendor/bin/phpunit`), add `./vendor/bin` to your $PATH, or symlink phpunit into the root directory of your website:
 
-This will install [PHPUnit](http://www.phpunit.de/) dependency, which is the framework we're
-building our unit tests on.  Composer installs it alongside the required PHP classes into the `vendor/bin/` directory.
-
-### Symlinking the PHPUnit Binary
-You can either use PHPUnit through its full path (`vendor/bin/phpunit`), or symlink it into the root directory of your website:
-
-	ln -s vendor/bin/phpunit phpunit
+- `PATH=./vendor/bin:$PATH` in your shell's profile script; **or**
+- `ln -s vendor/bin/phpunit phpunit` at the command prompt in your project root
 
 ## Configuration
 
@@ -61,7 +55,7 @@ should have the appropriate permissions to create new databases on your server, 
 
 ## Writing Tests
 
-Tests are written by creating subclasses of `[api:SapphireTest]`.  You should put tests for your site in the
+Tests are written by creating subclasses of [api:SapphireTest].  You should put tests for your site in the
 `mysite/tests` directory.  If you are writing tests for a module, put them in the `(modulename)/tests` directory.
 
 Generally speaking, there should be one test class for each application class.  The name of the test class should be the
@@ -106,7 +100,7 @@ All command-line arguments are documented on
 ### Via the "sake" Wrapper on Command Line
 
 The [sake](/developer_guides/cli/) executable that comes with SilverStripe can trigger a customized
-`[api:TestRunner]` class that handles the PHPUnit configuration and output formatting.
+[api:TestRunner] class that handles the PHPUnit configuration and output formatting.
 While the custom test runner a handy tool, its also more limited than using `phpunit` directly,
 particularly around formatting test output.
 
@@ -128,6 +122,6 @@ particularly around formatting test output.
 ### Via Web Browser
 
 Executing tests from the command line is recommended, since it most closely reflects
-test runs in any automated testing environments. However, you can also run tests through the browser (requires PHPUnit version 3.7.*@stable):
+test runs in any automated testing environments. However, you can also run tests through the browser:
 
 	http://localhost/dev/tests

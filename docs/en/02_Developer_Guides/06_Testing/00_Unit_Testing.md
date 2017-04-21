@@ -74,6 +74,10 @@ The `phpunit` binary should be used from the root directory of your website.
 	# Run tests with optional `$_GET` parameters (you need an empty second argument)
 
 <div class="alert" markdown="1">
+The manifest is not flushed when running tests. Add `flush=all` to the test command to do this (see above example.)
+</div>
+
+<div class="alert" markdown="1">
 If phpunit is not installed globally on your machine, you may need to replace the above usage of `phpunit` with the full
 path (e.g `vendor/bin/phpunit framework/tests`)
 </div>
@@ -92,7 +96,7 @@ environments. If for some reason you don't have access to the command line, you 
 
 ### Via the CLI
 
-The [sake](../cli) executable that comes with SilverStripe can trigger a customized `[api:TestRunner]` class that 
+The [sake](../cli) executable that comes with SilverStripe can trigger a customized [api:TestRunner] class that 
 handles the PHPUnit configuration and output formatting. While the custom test runner a handy tool, it's also more 
 limited than using `phpunit` directly, particularly around formatting test output.
 
@@ -182,16 +186,8 @@ end of each test.
 				$page->publish('Stage', 'Live');
 			}
 
-			// reset configuration for the test.
-			Config::nest();
+			// set custom configuration for the test.
 			Config::inst()->update('Foo', 'bar', 'Hello!');
-		}
-
-		public function tearDown() {
-			// restores the config variables
-			Config::unnest();
-
-			parent::tearDown();
 		}
 
 		public function testMyMethod() {
@@ -222,6 +218,32 @@ individual test case.
 
 			// ..
 		}
+	}
+	
+### Config and Injector Nesting
+
+A powerful feature of both [`Config`](/developer_guides/configuration/configuration/) and [`Injector`](/developer_guides/extending/injector/) is the ability to "nest" them so that you can make changes that can easily be discarded without having to manage previous values.
+
+The testing suite makes use of this to "sandbox" each of the unit tests as well as each suite to prevent leakage between tests.
+
+If you need to make changes to `Config` (or `Injector) for each test (or the whole suite) you can safely update `Config` (or `Injector`) settings in the `setUp` or `tearDown` functions.
+
+It's important to remember that the `parent::setUp();` functions will need to be called first to ensure the nesting feature works as expected.
+
+	:::php
+	function setUpOnce() {
+		parent::setUpOnce();
+		//this will remain for the whole suite and be removed for any other tests
+		Config::inst()->update('ClassName', 'var_name', 'var_value');
+	}
+	
+	function testFeatureDoesAsExpected() {
+		//this will be reset to 'var_value' at the end of this test function
+		Config::inst()->update('ClassName', 'var_name', 'new_var_value');
+	}
+	
+	function testAnotherFeatureDoesAsExpected() {
+		Config::inst()->get('ClassName', 'var_name'); // this will be 'var_value'
 	}
 
 ## Generating a Coverage Report

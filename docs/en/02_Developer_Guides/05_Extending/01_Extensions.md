@@ -23,7 +23,7 @@ the [api:Extension] class for non DataObject subclasses (such as [api:Controller
 
 		public function SayHi() {
 			// $this->owner refers to the original instance. In this case a `Member`.
-			return "Hi ". $this->owner->Name;
+			return "Hi " . $this->owner->Name;
 		}
 	}
 
@@ -80,7 +80,7 @@ $has_one etc.
 
 		public function SayHi() {
 			// $this->owner refers to the original instance. In this case a `Member`.
-			return "Hi ". $this->owner->Name;
+			return "Hi " . $this->owner->Name;
 		}
 	}
 
@@ -114,7 +114,7 @@ we added a `SayHi` method which is unique to our extension.
 
 If the `Extension` needs to modify an existing method it's a little trickier. It requires that the method you want to
 customize has provided an *Extension Hook* in the place where you want to modify the data. An *Extension Hook* is done 
-through the `[api:Object->extend]` method.
+through the [api:Object::extend()] method.
 
 **framework/security/Member.php**
 
@@ -209,8 +209,8 @@ In your [api:Extension] class you can only refer to the source object through th
 
 ## Checking to see if an Object has an Extension
 
-To see what extensions are currently enabled on an object, use [api:Object->getExtensionInstances] and 
-[api:Object->hasExtension]
+To see what extensions are currently enabled on an object, use [api:Object::getExtensionInstances()] and 
+[api:Object::hasExtension()]
 
 
 	:::php

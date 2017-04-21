@@ -63,11 +63,7 @@ he_IL:
     TITLE: 'מסגרת העלאת תמונה'
   LeftAndMain:
     HELP: עזרה
-    PAGETYPE: 'סוג העמוד'
     PERMAGAIN: 'התנתקת מהמערכת. לחיבור מחדש נא להזין שם וסיסמה'
-    PERMALREADY: 'צר לנו, אך לא תוכל לגשת לחלק זה של מערכת ניהול התוכן. אם ברצונך להתחבר למערכת בתור משתמש אחר נא להשתמש בתיבה בעמוד זה'
-    PERMDEFAULT: 'נא לבחור בשיטת וידוא והזן פרטיך למערכת'
-    PLEASESAVE: 'נא לשמור עמוד זה. העמוד לא עודכן מכיוון ולא עודכן.'
   Member:
     BUTTONCHANGEPASSWORD: 'שנה סיסמא'
     BUTTONLOGIN: 'התחבר'
@@ -83,12 +79,10 @@ he_IL:
     NEWPASSWORD: 'סיסמא חדשה'
     PASSWORD: סיסמא
     PLURALNAME: חברים רשומים
-    REMEMBERME: 'זכור אותי בפעם הבאה?'
     SINGULARNAME: חבר רשום
     SUBJECTPASSWORDCHANGED: 'סיסמתך השתנתה'
     SUBJECTPASSWORDRESET: 'קישור לאתחול הסיסמא שלך'
     SURNAME: שם משפחה
-    VALIDATIONMEMBEREXISTS: 'קיים כבר משתמש עם כתובת דואר זו.'
     YOUROLDPASSWORD: 'הסיסמא הישנה שלך'
     belongs_many_many_Groups: קבוצות
     db_LockedOutUntil: 'נעול עד '

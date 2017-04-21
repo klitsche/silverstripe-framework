@@ -98,10 +98,22 @@ class Member extends DataObject implements TemplateGlobalProvider {
 		'Email',
 	);
 
+	/**
+	 * @config
+	 * @var array
+	 */
 	private static $summary_fields = array(
 		'FirstName',
 		'Surname',
 		'Email',
+	);
+
+	/**
+	 * @config
+	 * @var array
+	 */
+	private static $casting = array(
+		'Name' => 'Varchar',
 	);
 
 	/**
@@ -254,7 +266,11 @@ class Member extends DataObject implements TemplateGlobalProvider {
 
 		// Ensure this user is in the admin group
 		if(!$admin->inGroup($adminGroup)) {
-			$admin->Groups()->add($adminGroup);
+			// Add member to group instead of adding group to member
+			// This bypasses the privilege escallation code in Member_GroupSet
+			$adminGroup
+				->DirectMembers()
+				->add($admin);
 		}
 
 		return $admin;
@@ -345,7 +361,7 @@ class Member extends DataObject implements TemplateGlobalProvider {
 	 * Returns true if this user is locked out
 	 */
 	public function isLockedOut() {
-		return $this->LockedOutUntil && time() < strtotime($this->LockedOutUntil);
+		return $this->LockedOutUntil && SS_Datetime::now()->Format('U') < strtotime($this->LockedOutUntil);
 	}
 
 	/**
@@ -355,7 +371,7 @@ class Member extends DataObject implements TemplateGlobalProvider {
 	 * quirky problems (such as using the Windmill 0.3.6 proxy).
 	 */
 	public static function session_regenerate_id() {
-		if(!self::$session_regenerate_id) return;
+		if(!self::config()->session_regenerate_id) return;
 
 		// This can be called via CLI during testing.
 		if(Director::is_cli()) return;
@@ -449,7 +465,8 @@ class Member extends DataObject implements TemplateGlobalProvider {
 
 		$this->NumVisit++;
 
-		if($remember) {
+		// Only set the cookie if autologin is enabled
+		if($remember && Security::config()->autologin_enabled) {
 			// Store the hash and give the client the cookie with the token.
 			$generator = new RandomGenerator();
 			$token = $generator->randomToken('sha1');
@@ -520,7 +537,8 @@ class Member extends DataObject implements TemplateGlobalProvider {
 		// Don't bother trying this multiple times
 		self::$_already_tried_to_auto_log_in = true;
 
-		if(strpos(Cookie::get('alc_enc'), ':') === false
+		if(!Security::config()->autologin_enabled
+			|| strpos(Cookie::get('alc_enc'), ':') === false
 			|| Session::get("loggedInAs")
 			|| !Security::database_is_ready()
 		) {
@@ -782,8 +800,8 @@ class Member extends DataObject implements TemplateGlobalProvider {
 	 * @return string Returns a random password.
 	 */
 	public static function create_new_password() {
-		if(file_exists(Security::get_word_list())) {
-			$words = file(Security::get_word_list());
+		if(file_exists(Security::config()->word_list)) {
+			$words = file(Security::config()->word_list);
 
 			list($usec, $sec) = explode(' ', microtime());
 			srand($sec + ((float) $usec * 100000));
@@ -795,7 +813,7 @@ class Member extends DataObject implements TemplateGlobalProvider {
 		} else {
 			$random = rand();
 			$string = md5($random);
-			$output = substr($string, 0, 6);
+			$output = substr($string, 0, 8);
 			return $output;
 		}
 	}
@@ -854,6 +872,9 @@ class Member extends DataObject implements TemplateGlobalProvider {
 		// Note that this only works with cleartext passwords, as we can't rehash
 		// existing passwords.
 		if((!$this->ID && $this->Password) || $this->isChanged('Password')) {
+			//reset salt so that it gets regenerated - this will invalidate any persistant login cookies
+			// or other information encrypted with this Member's settings (see self::encryptWithUserSettings)
+			$this->Salt = '';
 			// Password was changed: encrypt the password according the settings
 			$encryption_details = Security::encrypt_password(
 				$this->Password, // this is assumed to be cleartext
@@ -890,27 +911,30 @@ class Member extends DataObject implements TemplateGlobalProvider {
 	public function onAfterWrite() {
 		parent::onAfterWrite();
 
+		Permission::flush_permission_cache();
+
 		if($this->isChanged('Password')) {
 			MemberPassword::log($this);
 		}
 	}
 
 	/**
+	 * Filter out admin groups to avoid privilege escalation,
 	 * If any admin groups are requested, deny the whole save operation.
 	 *
 	 * @param Array $ids Database IDs of Group records
-	 * @return boolean
+	 * @return boolean True if the change can be accepted
 	 */
 	public function onChangeGroups($ids) {
-		// Filter out admin groups to avoid privilege escalation,
 		// unless the current user is an admin already OR the logged in user is an admin
-		if(!(Permission::check('ADMIN') || Permission::checkMember($this, 'ADMIN'))) {
-			$adminGroups = Permission::get_groups_by_permission('ADMIN');
-			$adminGroupIDs = ($adminGroups) ? $adminGroups->column('ID') : array();
-			return count(array_intersect($ids, $adminGroupIDs)) == 0;
-		} else {
+		if(Permission::check('ADMIN') || Permission::checkMember($this, 'ADMIN')) {
 			return true;
 		}
+
+		// If there are no admin groups in this set then it's ok
+		$adminGroups = Permission::get_groups_by_permission('ADMIN');
+		$adminGroupIDs = ($adminGroups) ? $adminGroups->column('ID') : array();
+		return count(array_intersect($ids, $adminGroupIDs)) == 0;
 	}
 
 
@@ -1147,6 +1171,7 @@ class Member extends DataObject implements TemplateGlobalProvider {
 	 * Use {@link DirectGroups()} to only retrieve the group relations without inheritance.
 	 *
 	 * @todo Push all this logic into Member_GroupSet's getIterator()?
+	 * @return Member_Groupset
 	 */
 	public function Groups() {
 		$groups = Member_GroupSet::create('Group', 'Group_Members', 'GroupID', 'MemberID');
@@ -1557,7 +1582,7 @@ class Member extends DataObject implements TemplateGlobalProvider {
 
 			if($this->FailedLoginCount >= self::config()->lock_out_after_incorrect_logins) {
 				$lockoutMins = self::config()->lock_out_delay_mins;
-				$this->LockedOutUntil = date('Y-m-d H:i:s', time() + $lockoutMins*60);
+				$this->LockedOutUntil = date('Y-m-d H:i:s', SS_Datetime::now()->Format('U') + $lockoutMins*60);
 				$this->write();
 			}
 		}
@@ -1656,6 +1681,47 @@ class Member_GroupSet extends ManyManyList {
 
 	public function foreignIDWriteFilter($id = null) {
 		return parent::foreignIDFilter($id);
+	}
+
+	public function add($item, $extraFields = null) {
+		// Get Group.ID
+		$itemID = null;
+		if(is_numeric($item)) {
+			$itemID = $item;
+		} else if($item instanceof Group) {
+			$itemID = $item->ID;
+		}
+
+		// Check if this group is allowed to be added
+		if($this->canAddGroups(array($itemID))) {
+			parent::add($item, $extraFields);
+		}
+	}
+
+	/**
+	 * Determine if the following groups IDs can be added
+	 *
+	 * @param array $itemIDs
+	 * @return boolean
+	 */
+	protected function canAddGroups($itemIDs) {
+		if(empty($itemIDs)) {
+			return true;
+		}
+		$member = $this->getMember();
+		return empty($member) || $member->onChangeGroups($itemIDs);
+	}
+
+	/**
+	 * Get foreign member record for this relation
+	 *
+	 * @return Member
+	 */
+	protected function getMember() {
+		$id = $this->getForeignID();
+		if($id) {
+			return DataObject::get_by_id('Member', $id);
+		}
 	}
 }
 

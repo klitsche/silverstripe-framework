@@ -4,26 +4,26 @@
 
 The framework uses caches to store infrequently changing values.
 By default, the storage mechanism is simply the filesystem, although
-other cache backends can be configured. All caches use the `[api:SS_Cache]` API.
+other cache backends can be configured. All caches use the [api:SS_Cache] API.
 
 The most common caches are manifests of various resources: 
 
- * PHP class locations (`[api:SS_ClassManifest]`)
- * Template file locations and compiled templates (`[api:SS_TemplateManifest]`)
- * Configuration settings from YAML files (`[api:SS_ConfigManifest]`)
- * Language files (`[api:i18n]`)
+ * PHP class locations ([api:SS_ClassManifest])
+ * Template file locations and compiled templates ([api:SS_TemplateManifest])
+ * Configuration settings from YAML files ([api:SS_ConfigManifest])
+ * Language files ([api:i18n])
 
 Flushing the various manifests is performed through a GET
 parameter (`flush=1`). Since this action requires more server resources than normal requests,
 executing the action is limited to the following cases when performed via a web request:
 
- * The [environment](../getting_started/environment_management) is in "dev mode"
+ * The [environment](/getting_started/environment_management) is in "dev mode"
  * A user is logged in with ADMIN permissions
  * An error occurs during startup
 
 ## The Cache API
 
-The `[api:SS_Cache]` class provides a bunch of static functions wrapping the Zend_Cache system 
+The [api:SS_Cache] class provides a bunch of static functions wrapping the Zend_Cache system 
 in something a little more easy to use with the SilverStripe config system.
 
 A `Zend_Cache` has both a frontend (determines how to get the value to cache, 
@@ -117,14 +117,16 @@ To use this backend, you need a memcached daemon and the memcache PECL extension
 		'primary_memcached', 
 		'Memcached',
 		array(
-			'host' => 'localhost', 
-			'port' => 11211, 
-			'persistent' => true, 
-			'weight' => 1, 
-			'timeout' => 5,
-			'retry_interval' => 15, 
-			'status' => true, 
-			'failure_callback' => '' 
+			'servers' => array(
+				'host' => 'localhost', 
+				'port' => 11211, 
+				'persistent' => true, 
+				'weight' => 1, 
+				'timeout' => 5,
+				'retry_interval' => 15, 
+				'status' => true, 
+				'failure_callback' => null
+			)
 		)
 	);
 	SS_Cache::pick_backend('primary_memcached', 'any', 10);

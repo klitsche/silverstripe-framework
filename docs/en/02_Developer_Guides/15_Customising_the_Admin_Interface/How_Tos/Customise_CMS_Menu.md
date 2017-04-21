@@ -1,11 +1,11 @@
 # How to customize the CMS Menu
 
-## Adding a administration panel
+## Adding an administration panel
 
-Every time you add a new extension of the `[api:LeftAndMain]` class to the CMS,
-SilverStripe will automatically create a new `[api:CMSMenuItem]` for it
+Every time you add a new extension of the [api:LeftAndMain] class to the CMS,
+SilverStripe will automatically create a new [api:CMSMenuItem] for it
 
-The most popular extension of LeftAndMain is a `[api:ModelAdmin]` class, so
+The most popular extension of LeftAndMain is a [api:ModelAdmin] class, so
 for a more detailed introduction to creating new `ModelAdmin` interfaces, read
 the [ModelAdmin reference](../modeladmin).
 
@@ -43,7 +43,7 @@ In order to localize the menu title in different languages, use the
 the i18n text collection.
 
 For more information on language and translations, please refer to the
-[i18n](../../ii8n) docs.
+[i18n](/developer_guides/i18n) docs.
 
 ## Adding an external link to the menu
 
@@ -51,7 +51,7 @@ On top of your administration windows, the menu can also have external links
 (e.g. to external reference). In this example, we're going to add a link to
 Google to the menu.
 
-First, we need to define a `[api:LeftAndMainExtension]` which will contain our
+First, we need to define a [api:LeftAndMainExtension] which will contain our
 button configuration.
 
 	:::php
@@ -85,7 +85,7 @@ button configuration.
 
 To have the link appear, make sure you add the extension to the `LeftAndMain`
 class. For more information about configuring extensions see the
-[extensions reference](../extending/extensions).
+[extensions reference](/developer_guides/extending/extensions).
 
 	:::php
 	LeftAndMain::add_extension('CustomLeftAndMain')

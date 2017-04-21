@@ -97,7 +97,10 @@
 							});
 
 							$.ajax({
-								'url': self.data('urlSavetreenode'),
+								'url': $.path.addSearchParams(
+									self.data('urlSavetreenode'),
+									self.data('extraParams')
+								),
 								'type': 'POST',
 								'data': {
 									ID: nodeID, 
@@ -105,7 +108,10 @@
 									SiblingIDs: siblingIDs
 								},
 								success: function() {
-									$('.cms-edit-form :input[name=ParentID]').val(newParentID);
+									// We only need to update the ParentID if the current page we're on is the page being moved
+									if ($('.cms-edit-form :input[name=ID]').val() == nodeID) {
+										$('.cms-edit-form :input[name=ParentID]').val(newParentID);
+									}
 									self.updateNodesFromServer([nodeID]);
 								},
 								statusCode: {

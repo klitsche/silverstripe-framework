@@ -98,16 +98,19 @@ class ChangePasswordForm extends Form {
 		else if($data['NewPassword1'] == $data['NewPassword2']) {
 			$isValid = $member->changePassword($data['NewPassword1']);
 			if($isValid->valid()) {
-				$member->logIn();
-				
-				// TODO Add confirmation message to login redirect
-				Session::clear('AutoLoginHash');
 
 				// Clear locked out status
 				$member->LockedOutUntil = null;
 				$member->FailedLoginCount = null;
 				$member->write();
-				
+
+				if ($member->canLogIn()->valid()) {
+					$member->logIn();
+				}
+
+				// TODO Add confirmation message to login redirect
+				Session::clear('AutoLoginHash');
+
 				if (!empty($_REQUEST['BackURL'])
 					// absolute redirection URLs may cause spoofing 
 					&& Director::is_site_url($_REQUEST['BackURL'])
@@ -129,9 +132,10 @@ class ChangePasswordForm extends Form {
 					_t(
 						'Member.INVALIDNEWPASSWORD', 
 						"We couldn't accept that password: {password}",
-						array('password' => nl2br("\n".$isValid->starredList()))
+						array('password' => nl2br("\n".Convert::raw2xml($isValid->starredList())))
 					), 
-					"bad"
+					"bad",
+					false
 				);
 
 				// redirect back to the form, instead of using redirectBack() which could send the user elsewhere.

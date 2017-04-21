@@ -66,7 +66,6 @@ ca:
   File:
     Content: Contingut
     Filename: Nom del fitxer
-    NOFILESIZE: 'La mida del fitxer és de zero bytes.'
     Name: Nom
     PLURALNAME: Fitxers
     SINGULARNAME: Fitxer
@@ -119,11 +118,7 @@ ca:
     TITLE: 'Iframe Carregador d''imatge'
   LeftAndMain:
     HELP: Ajuda
-    PAGETYPE: 'Tipus de pàgina:'
     PERMAGAIN: 'Heu estat desconnectat del SGC. Si voleu entrar de nou, introduïu un nom d''usuari i contrasenya a sota'
-    PERMALREADY: 'Lamentant-ho molt, no podeu accedir a aquesta part del SGC. Si voleu entrar com a algú altre, feu-ho a sota'
-    PERMDEFAULT: 'Introduïu la vostra adreça de correu electrònic i la contrasenya per a entrar al SGC.'
-    PLEASESAVE: 'Si us plau, deseu la pàgina: aquesta pàgina no s''ha pogut actualitzar perquè encara no s''ha desat.'
   LoginAttempt:
     Email: 'Adreça de correu'
     IP: 'Adreça IP'
@@ -144,12 +139,10 @@ ca:
     NEWPASSWORD: 'Nova contrasenya'
     PASSWORD: Contrasenya
     PLURALNAME: Membres
-    REMEMBERME: 'Recorda''m el proper cop'
     SINGULARNAME: Membre
     SUBJECTPASSWORDCHANGED: 'La vostra contrasenya s''ha canviat'
     SUBJECTPASSWORDRESET: 'Enllaç per canviar la contrasenya'
     SURNAME: Cognom
-    VALIDATIONMEMBEREXISTS: 'Ja existeix un membre amb aquesta adreça de correu electrònic'
     YOUROLDPASSWORD: 'La vostra contrasenya anterior'
     belongs_many_many_Groups: Grups
     db_LastVisited: 'Data de la darrera visita'

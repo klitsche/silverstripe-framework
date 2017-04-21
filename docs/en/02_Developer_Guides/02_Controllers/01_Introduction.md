@@ -124,7 +124,7 @@ Action methods can return one of four main things:
 
 		$this->response->addHeader("Content-type", "application/json");
 
-		return $this->response.
+		return $this->response;
 	}
 
 For more information on how a URL gets mapped to an action see the [Routing](routing) documentation.
@@ -159,7 +159,7 @@ Each controller should define a `Link()` method. This should be used to avoid ha
 	}
 
 <div class="info" markdown="1">
-The [api:Controller::join_links] is optional, but makes `Link()` more flexible by allowing an `$action` argument, and concatenates the path segments with slashes. The action should map to a method on your controller.
+The [api:Controller::join_links()] is optional, but makes `Link()` more flexible by allowing an `$action` argument, and concatenates the path segments with slashes. The action should map to a method on your controller.
 </div>
 
 ## Related Documentation

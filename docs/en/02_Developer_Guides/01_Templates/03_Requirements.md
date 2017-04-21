@@ -23,44 +23,44 @@ Requiring assets from the template is restricted compared to the PHP API.
 ## PHP Requirements API
 
 It is common practice to include most Requirements either in the *init()*-method of your [controller](../controllers/), or
-as close to rendering as possible (e.g. in `[api:FormField]`.
+as close to rendering as possible (e.g. in [api:FormField]).
 
 	:::php
 	<?php
 
 	class MyCustomController extends Controller {
 
-		public function init() {
-			parent::init();
+        public function init() {
+            parent::init();
 		
-			Requirements::javascript("cms/javascript/LeftAndMain.js");
-			Requirements::css("cms/css/TreeSelector.css");
-		}
-	}
+            Requirements::javascript("cms/javascript/LeftAndMain.js");
+            Requirements::css("cms/css/TreeSelector.css");
+        }
+    }
 
 ### CSS Files
 
 	:::php
-	Requirements::css($path, $media);
+    Requirements::css($path, $media);
 
 If you're using the CSS method a second argument can be used. This argument defines the 'media' attribute of the 
 `<link>` element, so you can define 'screen' or 'print' for example.
 
 	:::php
-	Requirements::css("cms/css/TreeSelector.css", "screen,projection");
+    Requirements::css("cms/css/TreeSelector.css", "screen,projection");
 
 ### Javascript Files
 
 	:::php
-	Requirements::javascript($path);
+    Requirements::javascript($path);
 
 A variant on the inclusion of custom javascript is the inclusion of *templated* javascript.  Here, you keep your
 JavaScript in a separate file and instead load, via search and replace, several PHP-generated variables into that code.
 
 	:::php
-	$vars = array(
-	    "EditorCSS" => "cms/css/editor.css",
-	);
+    $vars = array(
+        "EditorCSS" => "cms/css/editor.css",
+    );
 
 	Requirements::javascriptTemplate("cms/javascript/editor.template.js", $vars);
 
@@ -186,7 +186,7 @@ If the Javascript files are preferred to be placed in the `<head>` tag rather th
 `Requirements.write_js_to_body` should be set to false.
 
 	:::php
-	Requirements::set_force_js_to_bottom(true);
+	Requirements::set_write_js_to_body(false);
 
 
 ## API Documentation

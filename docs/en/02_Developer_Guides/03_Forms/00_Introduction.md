@@ -87,7 +87,7 @@ controller action. To grant it access through URLs, we add it to the `$allowed_a
 
 <div class="notice" markdown="1">
 Form actions (`doSayHello`), on the other hand, should _not_ be included in `$allowed_actions`; these are handled 
-separately through [api:Form::httpSubmission].
+separately through [api:Form::httpSubmission()].
 </div>
 
 
@@ -100,7 +100,7 @@ Some common examples are [api:TextField] or [api:DropdownField].
 	TextField::create($name, $title, $value);
 
 <div class="info" markdown='1'>
-A list of the common FormField subclasses is available on the [Common Subclasses](fields/common_subclasses) page.
+A list of the common FormField subclasses is available on the [Common Subclasses](field_types/common_subclasses/) page.
 </div>
 
 The fields are added to the [api:FieldList] `fields` property on the `Form` and can be modified at up to the point the 

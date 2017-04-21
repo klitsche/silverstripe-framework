@@ -11,7 +11,7 @@ SilverStripe needs to boot its core and run through several stages of processing
 
 The first step in most environments is a rewrite of a request path into parameters passed to a PHP script.
 This allows writing friendly URLs instead of linking directly to PHP files.
-The implementation depends on your web server, we'll show you the most common one here: 
+The implementation depends on your web server; we'll show you the most common one here: 
 Apache with [mod_rewrite](http://httpd.apache.org/docs/2.0/mod/mod_rewrite.html).
 Check our [installation guides](/getting_started/installation) on how other web servers like IIS or nginx handle rewriting.
 
@@ -93,7 +93,7 @@ All requests go through `framework/main.php`, which sets up the execution enviro
  * Optionally regenerates these manifests (if a ["flush" query parameter](flushable) is set)
  * Executes all procedural configuration defined through `_config.php` in all discovered modules
  * Loads the Composer PHP class autoloader
- * Hands control over to `[api:Director]`
+ * Hands control over to [api:Director]
 
 While you usually don't need to modify the bootstrap on this level, some deeper customizations like
 adding your own manifests or a performance-optimized routing might require it.
@@ -103,19 +103,19 @@ before handing control off to SilverStripe's own `main.php`.
 
 ## Routing and Request Handling
 
-The `main.php` script relies on `[api:Director]` to work out which [controller](../controllers/) should handle this request. It parses the URL, matching it to one of a number of patterns, 
+The `main.php` script relies on [api:Director] to work out which [controller](../controllers/) should handle this request. It parses the URL, matching it to one of a number of patterns, 
 and determines the controller, action and any argument to be used ([Routing](../controllers/routing)).
 
- * Creates a `[api:SS_HTTPRequest]` object containing all request and environment information
+ * Creates a [api:SS_HTTPRequest] object containing all request and environment information
  * The [session](../cookies_and_sessions/sessions) holds an abstraction of PHP session
  * Instantiates a [controller](../controllers/) object
- * The `[api:Injector]` is first referenced, and asks the registered 
+ * The [api:Injector] is first referenced, and asks the registered 
    [RequestFilter](../controllers/requestfilters)
    to pre-process the request object (see below)
- * The `Controller` executes the actual business logic and populates an `[api:SS_HTTPResponse]`
+ * The `Controller` executes the actual business logic and populates an [api:SS_HTTPResponse]
  * The `Controller` can optionally hand off control to further nested controllers
  * The `Controller` optionally renders a response body through `SSViewer` [templates](../templates)
- * The `[api:RequestProcessor]` is called to post-process the request to allow 
+ * The [api:RequestProcessor] is called to post-process the request to allow 
 further filtering before content is sent to the end user
  * The response is output to the client
 
@@ -123,7 +123,7 @@ further filtering before content is sent to the end user
 
 The framework provides the ability to hook into the request both before and 
 after it is handled to allow binding custom logic. This can be used
-to transform or filter request data, instanciate helpers, execute global logic,
+to transform or filter request data, instantiate helpers, execute global logic,
 or even short-circuit execution (e.g. to enforce custom authentication schemes).
 The ["Request Filters" documentation](../controllers/requestfilters) shows you how.
 

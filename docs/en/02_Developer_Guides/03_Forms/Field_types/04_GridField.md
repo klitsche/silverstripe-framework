@@ -17,7 +17,7 @@ GridField can only be used with `$list` data sets that are of the type `SS_List`
 
 <div class="notice" markdown="1">
 [api:GridField] powers the automated data UI of [api:ModelAdmin]. For more information about `ModelAdmin` see the 
-[Customizing the CMS](../../customizing_the_cms) guide.
+[Customizing the CMS](/developer_guides/customising_the_admin_interface) guide.
 </div>
 
 Each `GridField` is built from a number of components grouped into the [api:GridFieldConfig]. Without any components, 
@@ -67,7 +67,7 @@ the `getConfig()` method on `GridField`.
 			$fields = parent::getCMSFields();
 
 			$fields->addFieldToTab('Root.Pages', 
-				$grid = GridField('Pages', 'All pages', SiteTree::get())
+				$grid = new GridField('Pages', 'All pages', SiteTree::get())
 			);
 
 			// GridField configuration
@@ -233,7 +233,7 @@ database.
 
 The `GridFieldDetailForm` component drives the record viewing and editing form. It takes its' fields from 
 `DataObject->getCMSFields()` method but can be customized to accept different fields via the 
-[api:GridFieldDetailForm->setFields] method.
+[api:GridFieldDetailForm::setFields()] method.
 
 	:::php
 	$form = $gridField->getConfig()->getComponentByType('GridFieldDetailForm');
@@ -351,7 +351,7 @@ processed placeholders as opposed to native template syntax.
 </div>
 
 Now you can add other components into this area by returning them as an array from your 
-[api:GridFieldComponent->getHTMLFragments()] implementation:
+[api:GridFieldComponent::getHTMLFragments()] implementation:
 
 	:::php
 	<?php

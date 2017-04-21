@@ -11,7 +11,7 @@ into the main CMS menu. A page can be bookmarked by a CMS author through a
 simple checkbox.
 
 For a deeper introduction to the inner workings of the CMS, please refer to our
-guide on [CMS Architecture](../reference/cms-architecture).
+guide on [CMS Architecture](/developer_guides/customising_the_admin_interface/cms_architecture).
 
 ## Overload a CMS template ##
 
@@ -60,7 +60,7 @@ Load the new CSS file into the CMS, by setting the `LeftAndMain.extra_requiremen
 	:::yml
 	LeftAndMain:
 	  extra_requirements_css:
-	    - mysite/css/BookmarkedPages.css:
+	    - mysite/css/BookmarkedPages.css
 
 ## Create a "bookmark" flag on pages ##
 

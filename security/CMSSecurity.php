@@ -186,9 +186,16 @@ PHP
 
 		// Get redirect url
 		$controller = $this->getResponseController(_t('CMSSecurity.SUCCESS', 'Success'));
-		$backURL = $this->request->requestVar('BackURL')
-			?: Session::get('BackURL')
-			?: Director::absoluteURL(AdminRootController::config()->url_base, true);
+		$backURLs = array(
+			$this->getRequest()->requestVar('BackURL'),
+			Session::get('BackURL'),
+			Director::absoluteURL(AdminRootController::config()->url_base, true),
+		);
+		foreach ($backURLs as $backURL) {
+			if ($backURL && Director::is_site_url($backURL)) {
+				break;
+			}
+		}
 
 		// Show login
 		$controller = $controller->customise(array(
@@ -197,7 +204,7 @@ PHP
 				'<p>Login success. If you are not automatically redirected '.
 				'<a target="_top" href="{link}">click here</a></p>',
 				'Login message displayed in the cms popup once a user has re-authenticated themselves',
-				array('link' => $backURL)
+				array('link' => Convert::raw2att($backURL))
 			)
 		));
 		

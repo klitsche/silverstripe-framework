@@ -429,6 +429,15 @@ class SSViewer_DataPresenter extends SSViewer_Scope {
 		}
 	}
 
+	/**
+	 * Get the injected value
+	 * 
+	 * @param string $property Name of property
+	 * @param array $params
+	 * @param bool $cast If true, an object is always returned even if not an object.
+	 * @return array Result array with the keys 'value' for raw value, or 'obj' if contained in an object
+	 * @throws InvalidArgumentException
+	 */
 	public function getInjectedValue($property, $params, $cast = true) {
 		$on = $this->itemIterator ? $this->itemIterator->current() : $this->item;
 
@@ -512,31 +521,24 @@ class SSViewer_DataPresenter extends SSViewer_Scope {
 		if (isset($arguments[1]) && $arguments[1] != null) $params = $arguments[1]; 
 		else $params = array();
 
-		$hasInjected = $res = null;
-
-		if ($name == 'hasValue') {
-			if ($val = $this->getInjectedValue($property, $params, false)) {
-				$hasInjected = true; $res = (bool)$val['value'];
-			}
-		}
-		else { // XML_val
-			if ($val = $this->getInjectedValue($property, $params)) {
-				$hasInjected = true;
-				$obj = $val['obj'];
+		$val = $this->getInjectedValue($property, $params);
+		if ($val) {
+			$obj = $val['obj'];
+			if ($name === 'hasValue') {
+				$res = $obj instanceof Object
+					? $obj->exists()
+					: (bool)$obj;
+			} else {
+				// XML_val
 				$res = $obj->forTemplate();
 			}
-		}
-
-		if ($hasInjected) {
 			$this->resetLocalScope();
 			return $res;
-		}
-		else {
+		} else {
 			return parent::__call($name, $arguments);
 		}
 	}
 }
-
 
 /**
  * Parses a template file with an *.ss file extension.
@@ -1108,10 +1110,10 @@ class SSViewer implements Flushable {
 		$rewrite = Config::inst()->get('SSViewer', 'rewrite_hash_links');
 		if($this->rewriteHashlinks && $rewrite) {
 			if(strpos($output, '<base') !== false) {
-				if($rewrite === 'php') { 
-					$thisURLRelativeToBase = "<?php echo Convert::raw2att(\$_SERVER['REQUEST_URI']); ?>";
+				if($rewrite === 'php') {
+					$thisURLRelativeToBase = "<?php echo Convert::raw2att(preg_replace(\"/^(\\\\/)+/\", \"/\", \$_SERVER['REQUEST_URI'])); ?>";
 				} else { 
-					$thisURLRelativeToBase = Convert::raw2att($_SERVER['REQUEST_URI']);
+					$thisURLRelativeToBase = Convert::raw2att(preg_replace("/^(\\/)+/", "/", $_SERVER['REQUEST_URI']));
 				}
 
 				$output = preg_replace('/(<a[^>]+href *= *)"#/i', '\\1"' . $thisURLRelativeToBase . '#', $output);
